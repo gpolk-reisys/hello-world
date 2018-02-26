@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>AD_ActivityHistoryGrid</name>
+        <uuid>_a-0000df83-2a99-8000-06a9-01ef9001ef90_5235</uuid>
+        <description>Grid showing details of a record's activity history</description>
+        <parentUuid>9fe7a67d-221f-4480-8baf-ce89637400ed</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>load(
+  local!searchTerm,
+  local!userFilter,
+  local!pagingInfo: #"SYSTEM_SYSRULES_pagingInfo"(1, 25, #"SYSTEM_SYSRULES_sortInfo"("when", false)),
+  with(
+    local!activities: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5265"(ri!id, local!searchTerm, local!userFilter),
+    local!activityUsers: #"SYSTEM_SYSRULES_forEach"(items: index(local!activities.data, "who", {}), expression: #"50777a54-3eb3-4dd9-9614-f15c89695c8c_FORMATNAME"(fv!item)),
+    #"SYSTEM_SYSRULES_dashboardLayout_v1"(
+      contents: {
+        #"SYSTEM_SYSRULES_sectionLayout_v1"(
+          label: "Activity History",
+          contents: #"SYSTEM_SYSRULES_columnsLayout"(
+            columns: {
+              #"SYSTEM_SYSRULES_columnLayout"(
+                contents: {
+                  #"SYSTEM_SYSRULES_pickerFieldUsers"(
+                    labelPosition: "COLLAPSED",
+                    placeholder: "Select a user to filter on their activity",
+                    groupFilter: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5213",
+                    maxSelections: 1,
+                    value: local!userFilter,
+                    saveInto: local!userFilter
+                  )
+                }
+              ),
+              #"SYSTEM_SYSRULES_columnLayout"(
+                contents: {
+                  #"SYSTEM_SYSRULES_textField"(
+                    labelPosition: "COLLAPSED",
+                    placeholder: "Search activity history actions and details",
+                    refreshAfter: "KEYPRESS",
+                    value: local!searchTerm,
+                    saveInto: local!searchTerm
+                  )
+                }
+              )
+            }
+          )
+        ),
+        #"SYSTEM_SYSRULES_sectionLayout_v1"(
+          contents: {
+            #"SYSTEM_SYSRULES_gridField"(
+              labelPosition: "COLLAPSED",
+              emptyGridMessage: "No activity entries available",
+              totalCount: local!activities.totalCount,
+              columns: {
+                #"SYSTEM_SYSRULES_gridTextColumn"(
+                  label: "User",
+                  data: local!activityUsers,
+                  field: "who",
+                  links: #"SYSTEM_SYSRULES_forEach"(
+                    items: index(local!activities.data, "who", {}),
+                    expression: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5244"(label: local!activityUsers[fv!index], username: fv!item)
+                  )
+                ),
+                #"SYSTEM_SYSRULES_gridTextColumn"(
+                  label: "Action",
+                  data: index(local!activities.data, "action", {}),
+                  field: "action"
+                ),
+                #"SYSTEM_SYSRULES_gridTextColumn"(
+                  label: "Details",
+                  data: index(local!activities.data, "details", {}),
+                  field: "details"
+                ),
+                #"SYSTEM_SYSRULES_gridTextColumn"(
+                  label: "On",
+                  data: #"SYSTEM_SYSRULES_forEach"(items: index(local!activities.data, "when", {}), expression: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5225"(fv!item)),
+                  field: "when",
+                  alignment: "RIGHT"
+                )
+              },
+              value: local!pagingInfo,
+              saveInto: local!pagingInfo
+            )
+          }
+        )
+      }
+    )
+  )
+)</definition>
+        <namedTypedValue>
+            <name>id</name>
+            <type>
+                <name>int</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <preferredEditor>interface</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role inherit="true" allowForAll="false" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+</contentHaul>

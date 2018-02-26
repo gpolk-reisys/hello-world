@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:com:appian:types:AD"
+  xmlns:tns="urn:com:appian:types:AD" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="%7Burn%3Acom%3Aappian%3Atypes%3AAD%7DAD_Priority.xsd"/>
+  <xsd:include schemaLocation="%7Burn%3Acom%3Aappian%3Atypes%3AAD%7DAD_Status.xsd"/>
+  <xsd:complexType name="AD_Deployment">
+    <xsd:annotation>
+      <xsd:appinfo source="appian.jpa">@Table(name="qckapp_ad_main")</xsd:appinfo>
+      <xsd:documentation><![CDATA[Structure of a single Deployment]]></xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="id" nillable="true" type="xsd:int">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@Id @GeneratedValue</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="title" nillable="true" type="xsd:string">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@Column(name="title")</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="status" nillable="true" type="tns:AD_Status">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@JoinColumn(name="status") @ManyToOne(cascade=REFRESH)</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="priority" nillable="true" type="tns:AD_Priority">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@JoinColumn(name="priority") @ManyToOne(cascade=REFRESH)</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="deployerName" nillable="true" type="xsd:string">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@Column(name="deployername")</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="deploymentTime" nillable="true" type="xsd:date">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@Column(name="deploymenttime")</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="patchVersion" nillable="true" type="xsd:string">
+        <xsd:annotation>
+          <xsd:appinfo source="appian.jpa">@Column(name="patchversion")</xsd:appinfo>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="folderId" nillable="true" type="xsd:int"/>
+      <xsd:element name="createdBy" nillable="true" type="xsd:string"/>
+      <xsd:element name="createdOn" nillable="true" type="xsd:dateTime"/>
+      <xsd:element name="updatedBy" nillable="true" type="xsd:string"/>
+      <xsd:element name="updatedOn" nillable="true" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

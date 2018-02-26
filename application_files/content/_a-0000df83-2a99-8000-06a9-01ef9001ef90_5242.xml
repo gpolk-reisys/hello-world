@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>AD_CreateUpdateDeployment</name>
+        <uuid>_a-0000df83-2a99-8000-06a9-01ef9001ef90_5242</uuid>
+        <description>Interface for creating and updating Deployments</description>
+        <parentUuid>9fe7a67d-221f-4480-8baf-ce89637400ed</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>load(
+  local!creating: isnull(ri!record),
+  local!oldRecord: ri!record,
+  local!oldDocuments: if(
+    isnull(ri!documents),
+    {},
+    ri!documents
+  ),
+  #"SYSTEM_SYSRULES_formLayout_v1"(
+    label: if(
+      local!creating,
+      "Add New Deployment",
+      "Update Deployment"
+    ),
+    contents: {
+      #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5240"(
+        record: ri!record,
+        documents: ri!documents,
+        deletedDocuments: ri!deletedDocs,
+        creating: local!creating,
+        readOnly: false
+      )
+    },
+    buttons: #"SYSTEM_SYSRULES_ButtonLayout"(
+      primaryButtons: {
+        if(
+          local!creating,
+          #"SYSTEM_SYSRULES_ButtonWidgetSubmit"(
+            label: "Submit Deployment",
+            style: "PRIMARY",
+            saveInto: {
+              a!save(ri!record.createdOn, now()),
+              a!save(ri!record.createdBy, loggedInUser()),
+              a!save(ri!record.updatedOn, now()),
+              a!save(ri!record.updatedBy, loggedInUser()),
+              a!save(ri!documents, reject(fn!isnull, ri!documents))
+            }
+          ),
+          #"SYSTEM_SYSRULES_ButtonWidgetSubmit"(
+            label: "Update Deployment",
+            style: "PRIMARY",
+            saveInto: {
+              a!save(ri!record.updatedOn, now()),
+              a!save(ri!record.updatedBy, loggedInUser()),
+              a!save(ri!oldRecord, local!oldRecord),
+              a!save(ri!documents, reject(fn!isnull, ri!documents)),
+              a!save(ri!addedDocs, reject(fn!isnull, difference(ri!documents, local!oldDocuments))),
+              a!save(ri!oldDocs, local!oldDocuments)
+            }
+          )
+        )
+      },
+      secondaryButtons: {
+        if(
+          local!creating,
+          {},
+          #"SYSTEM_SYSRULES_ButtonWidgetSubmit"(
+            label: "Cancel",
+            style: "NORMAL",
+            value: true,
+            saveInto: {
+              ri!cancel,
+              a!save(ri!addedDocs, reject(fn!isnull, difference(ri!documents, local!oldDocuments))),
+              a!save(ri!deletedDocs, append(difference(ri!deletedDocs, local!oldDocuments), ri!addedDocs))
+            },
+            skipValidation: true
+          )
+        )
+      }
+    )
+  )
+)</definition>
+        <namedTypedValue>
+            <name>record</name>
+            <type>
+                <name>AD_Deployment</name>
+                <namespace>urn:com:appian:types:AD</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>oldRecord</name>
+            <type>
+                <name>AD_Deployment</name>
+                <namespace>urn:com:appian:types:AD</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>documents</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>addedDocs</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>deletedDocs</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>oldDocs</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>cancel</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <preferredEditor>interface</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role inherit="true" allowForAll="false" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+</contentHaul>
