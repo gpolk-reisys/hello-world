@@ -31,18 +31,30 @@
     contents: {
       #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5240"(
         record: ri!record,
-        documents: ri!documents,
-        deletedDocuments: ri!deletedDocs,
         creating: local!creating,
-        readOnly: false
-      )
+        readOnly: false,
+        documents: ri!documents,
+        deletedDocuments: ri!deletedDocs
+      ),
+                #"SYSTEM_SYSRULES_dropdownField"(
+            label: "Environment",
+            labelPosition: "ABOVE",
+            instructions: "",
+            helpTooltip: "",
+            placeholderLabel: "--- Select a Value ---",
+            choiceLabels: #"_a-0000e052-6d46-8000-06a9-01ef9001ef90_7171",
+            choiceValues: #"_a-0000e052-6d46-8000-06a9-01ef9001ef90_7172"/*,
+            value: ri!record.status,
+            saveInto: ri!record.status*/
+          )
     },
+    
     buttons: #"SYSTEM_SYSRULES_ButtonLayout"(
       primaryButtons: {
         if(
           local!creating,
           #"SYSTEM_SYSRULES_ButtonWidgetSubmit"(
-            label: "Submit Deployment",
+            label: "Start Deployment",
             style: "PRIMARY",
             saveInto: {
               a!save(ri!record.createdOn, now()),
@@ -135,6 +147,7 @@
                 <namespace>http://www.w3.org/2001/XMLSchema</namespace>
             </type>
         </namedTypedValue>
+        <metadataExpr></metadataExpr>
         <preferredEditor>interface</preferredEditor>
         <offlineEnabled>false</offlineEnabled>
     </rule>
