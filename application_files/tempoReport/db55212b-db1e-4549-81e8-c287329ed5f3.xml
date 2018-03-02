@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tempoReportHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <tempoReport a:uuid="db55212b-db1e-4549-81e8-c287329ed5f3" name="Deployments">
+        <a:description>Aggregated information and metrics on Deployments</a:description>
+        <a:uiExpr>=#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5245"()</a:uiExpr>
+        <a:urlStub>411vtg</a:urlStub>
+    </tempoReport>
+    <roleMap>
+        <role name="report_administrator">
+            <users/>
+            <groups>
+                <groupUuid>_e-0000df83-2a86-8000-0670-011e94011e94_25</groupUuid>
+            </groups>
+        </role>
+        <role name="report_viewer">
+            <users/>
+            <groups>
+                <groupUuid>_e-0000df83-2a86-8000-0670-011e94011e94_26</groupUuid>
+            </groups>
+        </role>
+    </roleMap>
+</tempoReportHaul>

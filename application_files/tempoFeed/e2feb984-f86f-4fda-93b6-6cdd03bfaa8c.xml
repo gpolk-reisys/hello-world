@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tempoFeedHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <tempoFeed>
+        <uuid>e2feb984-f86f-4fda-93b6-6cdd03bfaa8c</uuid>
+        <name>Auto Deploy</name>
+        <description>Feed for updates about Deployments</description>
+        <showInCatalog>true</showInCatalog>
+        <systemFeed>false</systemFeed>
+    </tempoFeed>
+    <roleMap>
+        <role name="administrator">
+            <users/>
+            <groups>
+                <groupUuid>_e-0000df83-2a86-8000-0670-011e94011e94_25</groupUuid>
+            </groups>
+        </role>
+    </roleMap>
+</tempoFeedHaul>

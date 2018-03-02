@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>AD_DeploymentDetails</name>
+        <uuid>_a-0000df83-2a99-8000-06a9-01ef9001ef90_5240</uuid>
+        <description>"Base" interface module, with all the basic fields of the record. Used by the Summary record view, create/update, and task forms.</description>
+        <parentUuid>9fe7a67d-221f-4480-8baf-ce89637400ed</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>load(
+  /* The local variables store the options for the Pick Single / Multiple from List fields    *
+   * We only show the active options, plus any inactive options already stored on this record */
+  local!statusOptions: if(ri!record.status.active,#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5229"(#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5263"(), null),#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5229"(#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5263"(), ri!record.status.id)),
+  local!priorityOptions: if(ri!record.priority.active,#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5229"(#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5264"(), null),#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5229"(#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5264"(), ri!record.priority.id)),
+  {
+    #"SYSTEM_SYSRULES_sectionLayout_v1"(
+      label: ri!label,
+      contents: #"SYSTEM_SYSRULES_columnsLayout"(
+        columns: {
+          #"SYSTEM_SYSRULES_columnLayout"(
+            contents: {
+        #"SYSTEM_SYSRULES_textField"(
+          label: "Title",
+          labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+          instructions: if(ri!readOnly, "", ""),
+          helpTooltip: if(ri!readOnly, "", ""),
+          placeholder: if(ri!readOnly, "", ""),
+          required: not(ri!readOnly),
+          value: ri!record.title,
+          saveInto: ri!record.title,
+          readOnly: ri!readOnly,
+          validations: if(
+            len(ri!record.title) &lt;= 200,
+            "",
+            "Value may not be longer than 200 characters. You have entered " &amp; len(ri!record.title) &amp; " characters."
+          )
+        ),
+        if(
+          ri!readOnly,
+          #"SYSTEM_SYSRULES_textField"(
+            label: "Status",
+            labelPosition: "ADJACENT",
+            value: ri!record.status.value,
+            readOnly: true
+          ),
+          #"SYSTEM_SYSRULES_dropdownField"(
+            label: "Status",
+            labelPosition: "ABOVE",
+            instructions: "",
+            helpTooltip: "",
+            placeholderLabel: "--- Select a Value ---",
+            choiceLabels: local!statusOptions.value,
+            choiceValues: local!statusOptions,
+            required: not(ri!readOnly),
+            value: ri!record.status,
+            saveInto: ri!record.status
+          )
+        ),
+        if(
+          ri!readOnly,
+          #"SYSTEM_SYSRULES_imageField"(
+            label: "Priority",
+            labelPosition: "ADJACENT",
+            images: if(
+              isnull(#"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5237"(ri!record.priority.value)),
+              {},
+              #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5237"(ri!record.priority.value)
+            ),
+            size: "ICON"
+          ),
+          #"SYSTEM_SYSRULES_dropdownField"(
+            label: "Priority",
+            labelPosition: "ABOVE",
+            instructions: "",
+            helpTooltip: "",
+            placeholderLabel: "--- Select a Value ---",
+            choiceLabels: local!priorityOptions.value,
+            choiceValues: local!priorityOptions,
+            required: not(ri!readOnly),
+            value: ri!record.priority,
+            saveInto: ri!record.priority
+          )
+        ),
+              if(
+                ri!creating,
+                {},
+                {
+                  #"SYSTEM_SYSRULES_linkField"(
+                    label: "Created By",
+                    labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+                    links: #"SYSTEM_SYSRULES_userRecordLink"(
+                      label: #"50777a54-3eb3-4dd9-9614-f15c89695c8c_FORMATNAME"(ri!record.createdBy),
+                      user: ri!record.createdBy
+                    )
+                  ),
+                  #"SYSTEM_SYSRULES_textField"(
+                    label: "Created On",
+                    labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+                    value: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5225"(ri!record.createdOn),
+                    readOnly: true
+                  )
+                }
+              )
+            }
+          ),
+          #"SYSTEM_SYSRULES_columnLayout"(
+            contents: {
+        #"SYSTEM_SYSRULES_textField"(
+          label: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5327",
+          labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+          instructions: if(ri!readOnly, "", ""),
+          helpTooltip: if(ri!readOnly, "", ""),
+          placeholder: if(ri!readOnly, "", ""),
+          required: false,
+          value: ri!record.deployerName,
+          saveInto: ri!record.deployerName,
+          readOnly: ri!readOnly,
+          validations: if(
+            len(ri!record.deployerName) &lt;= 200,
+            "",
+            "Value may not be longer than 200 characters. You have entered " &amp; len(ri!record.deployerName) &amp; " characters."
+          )
+        ),
+        #"SYSTEM_SYSRULES_dateField"(
+          label: "Deployment Time",
+          labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+          instructions: if(ri!readOnly, "", ""),
+          helpTooltip: if(ri!readOnly, "", ""),
+          required: false,
+          value: ri!record.deploymentTime,
+          saveInto: ri!record.deploymentTime,
+          readOnly: ri!readOnly
+        ),
+        #"SYSTEM_SYSRULES_textField"(
+          label: "Patch Version",
+          labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+          instructions: if(ri!readOnly, "", ""),
+          helpTooltip: if(ri!readOnly, "", ""),
+          placeholder: if(ri!readOnly, "", ""),
+          required: false,
+          value: ri!record.patchVersion,
+          saveInto: ri!record.patchVersion,
+          readOnly: ri!readOnly,
+          validations: if(
+            len(ri!record.patchVersion) &lt;= 200,
+            "",
+            "Value may not be longer than 200 characters. You have entered " &amp; len(ri!record.patchVersion) &amp; " characters."
+          )
+        ),
+              if(
+                ri!creating,
+                {},
+                {
+                  #"SYSTEM_SYSRULES_linkField"(
+                    label: "Updated By",
+                    labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+                    links: #"SYSTEM_SYSRULES_userRecordLink"(
+                      label: #"50777a54-3eb3-4dd9-9614-f15c89695c8c_FORMATNAME"(ri!record.updatedBy),
+                      user: ri!record.updatedBy
+                    )
+                  ),
+                  #"SYSTEM_SYSRULES_textField"(
+                    label: "Updated On",
+                    labelPosition: if(ri!readOnly, "ADJACENT", "ABOVE"),
+                    value: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5225"(ri!record.updatedOn),
+                    readOnly: true
+                  )
+                }
+              )
+            }
+          )
+        }
+      )
+    ),
+    #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5236"(
+      documents: ri!documents,
+      deletedDocuments: ri!deletedDocuments,
+      readOnly: ri!readOnly,
+      target: if(ri!creating,
+        #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5218",
+        ri!record.folderId
+      )
+    )
+  }
+)</definition>
+        <namedTypedValue>
+            <name>record</name>
+            <type>
+                <name>AD_Deployment</name>
+                <namespace>urn:com:appian:types:AD</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>creating</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>readOnly</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>documents</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>label</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>deletedDocuments</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <metadataExpr></metadataExpr>
+        <preferredEditor>interface</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role inherit="true" allowForAll="false" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+</contentHaul>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>AD_TaskGridColumn</name>
+        <uuid>_a-0000df83-2a99-8000-06a9-01ef9001ef90_5250</uuid>
+        <description>Generates a single column dynamically for use in task grids on Deployment records and in task reports. Dynamic generation lets changes to the process report be reflected instantly without needing to reconfigure the SAIL interface.</description>
+        <parentUuid>66f7b4f4-3500-4b91-98ba-c2e6f5315095</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>with(
+  local!columnData: index(ri!data, ri!columnConfig.field, {}),
+  /* Prepare a list of record names to display in the Record column */
+  local!recordNames: if(
+    or(isnull(ri!recordNames), length(ri!recordNames) = 0),
+    {},
+    index(
+      ri!recordNames.title,
+      #"SYSTEM_SYSRULES_forEach"(
+        items: tointeger(local!columnData),
+        expression: fn!wherecontains(fv!item, tointeger(ri!recordNames.id))        
+      )
+    )
+  ),
+  /* Show an image column for task status */
+  if(
+    and(ri!columnConfig.configuredFormatting = "TASK_STATUS", count(local!columnData) &gt; 0),
+    #"SYSTEM_SYSRULES_gridImageColumn"(
+      label: ri!columnConfig.label,
+      field: ri!columnConfig.field,
+      data: #"SYSTEM_SYSRULES_forEach"(
+        items: local!columnData,
+        expression: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5230"(fv!item)
+      ),
+      size: "ICON"
+    ),
+    #"SYSTEM_SYSRULES_gridTextColumn"(
+      label: ri!columnConfig.label,
+      showWhen: and(
+        /* The column for record ID will not appear if we're filtering by record. */
+        not(and(ri!columnConfig.field = "c7", ri!filterByRecord)),
+
+        /* In addition, the column for Assignee will not appear if we're viewing My Tasks, *
+         * and the column for From will not appear if we're filtering by sender.           */
+        not(
+          and(
+            ri!columnConfig.label = if(
+              ri!toOrFrom = "my tasks",
+              "Assignee",
+              "From"
+            ),
+            not(ri!filterByRecord)
+          )
+        )
+      ),
+      field: ri!columnConfig.field,
+      data: if(
+        ri!columnConfig.configuredDrilldown = "USER_PROFILE",
+        #"SYSTEM_SYSRULES_forEach"(
+          items: local!columnData,
+          expression: #"50777a54-3eb3-4dd9-9614-f15c89695c8c_FORMATNAME"(tostring(fv!item))
+        ),
+        if(
+          ri!columnConfig.configuredFormatting = "DATE_TIME",
+          #"SYSTEM_SYSRULES_forEach"(
+            items: local!columnData,
+            expression: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5225"(fv!item)
+          ),
+          if(
+            /* For the field that holds the record IDs, display the record names here instead. */
+            ri!columnConfig.field = "c7",
+            local!recordNames,
+            local!columnData
+          )
+        )
+      ),
+      links: if(
+        ri!columnConfig.configuredDrilldown = "USER_PROFILE",
+        #"SYSTEM_SYSRULES_forEach"(
+          items: local!columnData,
+          expression: #"SYSTEM_SYSRULES_userRecordLink"(label: fv!item, user: fv!item)
+        ),
+        if(
+          /* For the field that holds the record IDs, put record links on the record names. */
+          ri!columnConfig.field = "c7",
+          #"SYSTEM_SYSRULES_forEach"(
+            items: local!columnData,
+            expression: #"SYSTEM_SYSRULES_recordLink"(
+              label: local!recordNames[fv!index],
+              recordType: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5216",
+              identifier: fv!item
+            )
+          ),
+          if(
+            /* Link from the task descriptions to the tasks themselves. Only add a link if   *
+             * the current user is the assignee.                                             */
+            ri!columnConfig.configuredDrilldown = "TASK_DETAILS",
+            #"SYSTEM_SYSRULES_forEach"(
+              items: index(ri!data, ri!columnConfig.drilldownField, {}),
+              expression: if(
+                touser(index(ri!data, "c8", null)[fv!index]) = loggedInUser(),
+                #"SYSTEM_SYSRULES_processTaskLink"(task: fv!item),
+                null
+              )
+            ),
+            {}
+          )
+        )
+      ),
+      alignment: if(
+        ri!columnConfig.configuredFormatting = "DATE_TIME",
+        "RIGHT",
+        "LEFT"
+      )
+    )
+  )
+)</definition>
+        <namedTypedValue>
+            <name>columnConfig</name>
+            <type>
+                <name>Variant</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>data</name>
+            <type>
+                <name>Variant</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>recordNames</name>
+            <type>
+                <name>Variant</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>filterByRecord</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>toOrFrom</name>
+            <type>
+                <name>string</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+            <value/>
+        </namedTypedValue>
+        <metadataExpr></metadataExpr>
+        <preferredEditor>interface</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role inherit="true" allowForAll="false" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+</contentHaul>

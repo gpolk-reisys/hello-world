@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<contentHaul xmlns:a="http://www.appian.com/ae/types/2009">
+    <rule>
+        <name>AD_AttachmentsGridRow</name>
+        <uuid>_a-0000df83-2a99-8000-06a9-01ef9001ef90_5221</uuid>
+        <description>Single row of the Attachments grid</description>
+        <parentUuid>66f7b4f4-3500-4b91-98ba-c2e6f5315095</parentUuid>
+        <visibility>
+            <advertise>false</advertise>
+            <hierarchy>true</hierarchy>
+            <indexable>true</indexable>
+            <quota>false</quota>
+            <searchable>true</searchable>
+            <system>false</system>
+            <unlogged>false</unlogged>
+        </visibility>
+        <definition>#"SYSTEM_SYSRULES_gridRowLayout"(
+  id: ri!index,
+  contents: {
+    if(
+      ri!index &gt; ri!oldAttachments,
+      #"SYSTEM_SYSRULES_fileUploadField"(
+        label: "file upload " &amp; ri!index,
+        target: ri!target,
+        value: ri!attachment,
+        saveInto: ri!attachment
+      ),
+      #"SYSTEM_SYSRULES_linkField"(
+        label: "document download link " &amp; ri!index,
+        links: #"SYSTEM_SYSRULES_documentDownloadLink"(
+          document: ri!attachment,
+          label: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5224"(ri!attachment)
+        )
+      )
+    ),
+    if(
+      ri!index &gt; ri!oldAttachments,
+      #"SYSTEM_SYSRULES_textField"(
+        label: "uploaded " &amp; ri!index,
+        readOnly: true,
+        value: ""
+      ),
+      #"SYSTEM_SYSRULES_textField"(
+        label: "uploaded " &amp; ri!index,
+        readOnly: true,
+        align: "RIGHT",
+        value: #"_a-0000df83-2a99-8000-06a9-01ef9001ef90_5225"(document(ri!attachment, "dateCreated"))
+      )
+    ),
+    if(
+      ri!readOnly,
+      {},
+      #"SYSTEM_SYSRULES_imageField"(
+        label: "delete " &amp; ri!index,
+        images: #"SYSTEM_SYSRULES_documentImage"(
+          document: #"SYSTEM_SYSRULES_iconIndicator"("REMOVE"),
+          altText: "Remove",
+          caption: "Remove",
+          link: #"SYSTEM_SYSRULES_dynamicLink"(
+            value: ri!index,
+            saveInto: {
+              if(
+                isnull(ri!attachment),
+                {},
+                a!save(ri!deletedAttachments, append(ri!deletedAttachments, ri!attachment))
+              ),
+              a!save(ri!attachments, remove(ri!attachments, save!value)),
+              if(
+                ri!index &gt; ri!oldAttachments,
+                {},
+                a!save(ri!oldAttachments, ri!oldAttachments - 1)
+              )
+            }
+          )
+        ),
+        size: "ICON"
+      )
+    )
+  }
+)</definition>
+        <namedTypedValue>
+            <name>attachment</name>
+            <type>
+                <name>CollaborationDocument</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>index</name>
+            <type>
+                <name>int</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>attachments</name>
+            <type>
+                <name>Variant</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>target</name>
+            <type>
+                <name>CollaborationFolder</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>readOnly</name>
+            <type>
+                <name>boolean</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>oldAttachments</name>
+            <type>
+                <name>int</name>
+                <namespace>http://www.w3.org/2001/XMLSchema</namespace>
+            </type>
+        </namedTypedValue>
+        <namedTypedValue>
+            <name>deletedAttachments</name>
+            <type>
+                <name>CollaborationDocument?list</name>
+                <namespace>http://www.appian.com/ae/types/2009</namespace>
+            </type>
+        </namedTypedValue>
+        <preferredEditor>legacy</preferredEditor>
+        <offlineEnabled>false</offlineEnabled>
+    </rule>
+    <roleMap public="true">
+        <role inherit="true" allowForAll="false" name="readers">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="authors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="true" allowForAll="false" name="administrators">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyReaders">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAuthors">
+            <users/>
+            <groups/>
+        </role>
+        <role inherit="false" allowForAll="false" name="denyAdministrators">
+            <users/>
+            <groups/>
+        </role>
+    </roleMap>
+</contentHaul>
